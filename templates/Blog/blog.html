@@ -1,0 +1,121 @@
+{% extends 'Blog/base.html' %}
+
+{% block content %}
+
+<h1>
+
+    {{ blog.titulo }}
+
+</h1>
+
+
+<h5>
+
+    {{ blog.subtitulo }}
+
+</h5>
+
+<div class="bg-white text-dark p-4 rounded">
+{{ blog.contenido|safe }}
+</div>
+
+<hr>
+{% if request.user.is_authenticated %}
+
+<a href="{% url 'like_blog' blog.blog_id %}"
+   class="btn btn-success">
+
+    👍 {{ total_likes }}
+
+</a>
+
+
+<a href="{% url 'dislike_blog' blog.blog_id %}"
+   class="btn btn-danger">
+
+    👎 {{ total_dislikes }}
+
+</a>
+
+
+<a href="{% url 'FormComment' blog.blog_id %}"
+   class="btn btn-primary">
+
+    Comentar
+
+</a>
+{% endif %}
+
+{% if request.user == blog.autor or request.user.is_superuser %}
+
+    <a href="{% url 'update-blog' blog.blog_id %}"
+       class="btn btn-warning">
+
+        Editar
+
+    </a>
+
+
+    <a href="{% url 'delete-blog' blog.blog_id %}"
+       class="btn btn-danger">
+
+        Eliminar
+
+    </a>
+
+{% endif %}
+
+
+<hr>
+
+
+<h3>
+
+    Comentarios
+
+</h3>
+
+
+
+{% for comment in comments %}
+
+<div class="card mb-3">
+
+    <div class="card-body text-dark">
+
+        <strong>
+
+            {{ comment.autor }}
+
+        </strong>
+
+        <br>
+        <div class="text-dark">
+           {{ comment.content|safe }}
+        </div>
+    </div>
+
+</div>
+{% if request.user == comment.autor or request.user.is_superuser %}
+
+    <a
+        href="{% url 'update-comment' comment.comment_id %}"
+        class="btn btn-warning btn-sm">
+
+        Editar
+
+    </a>
+
+    <a
+        href="{% url 'delete-comment' comment.comment_id %}"
+        class="btn btn-danger btn-sm">
+
+        Eliminar
+
+    </a>
+
+{% endif %}
+
+{% endfor %}
+
+{% endblock %}

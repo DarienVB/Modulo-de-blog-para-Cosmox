@@ -1,0 +1,36 @@
+{% extends 'Blog/base.html' %}
+
+{% block content %}
+
+<a
+    href="{% url 'create-tag' %}"
+    class="btn btn-primary mb-4">
+
+    Crear categoría
+
+</a>
+
+
+{% for tag in tags %}
+
+<div class="card mb-3">
+
+    <div class="card-body text-dark">
+    {% if request.user == tag.autor or request.user.is_superuser %}
+        {{ tag.name }}
+
+        <a
+            href="{% url 'delete-tag' tag.tag_id %}"
+            class="btn btn-danger btn-sm">
+
+            Eliminar
+
+        </a>
+
+    </div>
+
+</div>
+{% endif %}
+{% endfor %}
+
+{% endblock %}
