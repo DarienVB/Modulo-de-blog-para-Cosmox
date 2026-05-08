@@ -18,13 +18,15 @@ class Blog_post(models.Model):
     class Meta:
         ordering = ['-date_created']
         
-def __str__(self):
-    return self.titulo
+    def __str__(self):
+      return self.titulo
 
 class Reaction_Posts(models.Model):
-    Reaction_id = models.UUIDField(default= uuid.uuid4, unique=True, primary_key=True, editable=False)
-    blog = models.ForeignKey(Blog_post, on_delete = models.PROTECT)
-    autor = models.ForeignKey(User, on_delete = models.PROTECT)
+
+    blog = models.OneToOneField(
+        Blog_post,
+        on_delete=models.CASCADE
+    )
     likes = models.ManyToManyField(User, related_name='blog_posts', verbose_name='Me Gusta')
     dislikes = models.ManyToManyField(User, related_name='blog_postss', verbose_name='No me Gusta')
     
@@ -34,17 +36,28 @@ class Reaction_Posts(models.Model):
     def total_dislikes(self):
         return self.dislikes.count()
       
-class Post_tag (models.Model):
-    name = models.CharField(max_length=255, unique=True)
-    tag_id = models.UUIDField(default= uuid.uuid4, unique=True, primary_key=True, editable=False)
-    slug = models.SlugField(unique=True)
-    
-    class Meta:
-      verbose_name_plural= 'tags'  
-      
-    def get_absolute_url(self):
-        return reverse(" Blog:tag", kwargs={"slug": self.slug })
-    
+class Post_tag(models.Model):
+
+    name = models.CharField(
+        max_length=255,
+        unique=True
+    )
+
+    autor = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
+
+    tag_id = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        primary_key=True,
+        editable=False
+    )
+
+    slug = models.SlugField(
+        unique=True
+    )
     
     def __str__(self):
         return self.name
@@ -63,5 +76,5 @@ class Post_comment (models.Model):
     def __str__(self):
         len_title = 15
         if len(self.content)> len_title:
-            return self.content[len_title] +'...'
+            return self.content[:len_title] +'...'
         return self.content
